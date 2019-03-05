@@ -1,9 +1,6 @@
 version: 2
 jobs:
-  build:
-    branches:
-      only:
-      - master
+  master:
     docker:
     - image: circleci/ruby
     steps:
@@ -28,9 +25,6 @@ jobs:
           done
           git push origin master
   feature:
-    branches:
-      ignore:
-      - master
     docker:
     - image: circleci/ruby
     steps:
@@ -53,3 +47,17 @@ jobs:
                   exit 1
               fi
           done
+workflows:
+  version: 2
+  workflow:
+    jobs:
+    - master:
+        filters:
+          branches:
+            only:
+            - master
+    - feature:
+        filters:
+          branches:
+            ignore:
+            - master
