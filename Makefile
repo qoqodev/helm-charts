@@ -6,6 +6,7 @@ endif
 
 name := $(shell grep name $(chart)/Chart.yaml | cut -d: -f2 | tr -d ' ')
 version := $(shell grep version $(chart)/Chart.yaml | cut -d: -f2 | tr -d ' ')
+git = git -c user.name="CircleCI" -c user.email="CircleCI"
 
 default: index
 
@@ -18,5 +19,5 @@ index:
 
 commit:
 	if [ "${CI}" != "true" ]; then echo CI env var must be true for $@; exit 1; fi
-	git add docs/
-	git commit -m "[ci] Add $(name)-$(version) to index"
+	$(git) add docs/
+	$(git) commit -m "[ci] Add $(name)-$(version) to index"
