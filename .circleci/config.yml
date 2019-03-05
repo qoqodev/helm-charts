@@ -1,0 +1,29 @@
+version: 2
+jobs:
+  build:
+    branches:
+      only:
+      - master
+    docker:
+    - image: circleci/ruby
+    steps:
+    - checkout
+    - add_ssh_keys
+    - run:
+        name: install helm
+        command: |
+          version=2.13.0
+          curl -L "https://storage.googleapis.com/kubernetes-helm/helm-v${version}-linux-amd64.tar.gz" | tar xvz
+          sudo mv linux-amd64/helm /usr/bin/helm
+          sudo chmod +x /usr/bin/helm
+          helm init --client-only
+    - run:
+        name: make index for new charts
+        command: |
+          # look at the diff of the most recent merge commit for any chart changes
+          new_charts="$(git diff-tree --no-commit-id --name-only -r -m HEAD src/*/Chart.yaml)"
+          for chart in $new_charts; do
+              make index chart="$(dirname "$chart")" 
+              make commit chart="$(dirname "$chart")" 
+          done
+          git push origin master
