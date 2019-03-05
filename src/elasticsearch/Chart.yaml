@@ -1,0 +1,8 @@
+apiVersion: v1
+name: elasticsearch
+version: 0.0.1
+appVersion: 6.6.0
+description: Fork of Elastic's official Elasticsearch Helm chart
+sources:
+- https://github.com/elastic/helm-charts
+- https://github.com/elastic/elasticsearch
