@@ -20,4 +20,4 @@ index:
 commit:
 	if [ "${CI}" != "true" ]; then echo CI env var must be true for $@; exit 1; fi
 	$(git) add docs/
-	$(git) commit -m "[ci] Add $(name)-$(version) to index"
+	$(git) commit -m "[ci skip] Add $(name)-$(version) to index"
