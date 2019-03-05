@@ -27,3 +27,29 @@ jobs:
               make commit chart="$(dirname "$chart")" 
           done
           git push origin master
+  feature:
+    branches:
+      ignore:
+      - master
+    docker:
+    - image: circleci/ruby
+    steps:
+    - checkout
+    - run:
+        name: verify version bump
+        command: |
+          chart_changes="$(git diff --name-only origin/master src)"
+          chart_dirs="$(echo "$chart_changes" | awk -F/ '{print $1 "/" $2}' | uniq)"
+          for dir in $chart_dirs; do
+              # check to see if the largest version is an addition
+              if git diff origin/master "${dir}/Chart.yaml" \
+                  | grep -E '^[-+]version:' \
+                  | sort -k2 -Vr \
+                  | head -n1 \
+                  | grep -qE '^[+]'; then
+                  echo "Version for chart $(basename "$dir") has been bumped"
+              else
+                  echo "Found changes in $(basename "$dir"), but version has not been bumped"
+                  exit 1
+              fi
+          done
